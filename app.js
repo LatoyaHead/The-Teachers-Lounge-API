@@ -41,13 +41,30 @@ app.post("/signup", async (req, res) => {
     const SALT = await bcrypt.genSalt(10) //how secure your hash will be
     //reassign the password to the hashed password
     req.body.password = await bcrypt.hash(req.body.password, SALT)
-    const user = await UserModel.create(req.body);
-    res.redirect('/');
+    await UserModel.create(req.body);
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot POST");
   }
 });
+app.post('/signin', async (req, res) => {
+  try {
+    //find user by email in db
+    const user = await UserModel.findOne({email: req.body.email})
+    if (!user) return res.send('Please check your email and password!')
+    //check if passwords match
+    const decodedPassword = await bcrypt.compare(req.body.password, user.password)
+    if(!decodedPassword) return res.send('Please check your email and password!')
+    //set the user session
+    //create a new username in the session obj using the user info from db
+    req.session.username = user.username
+    req.session.loggedIn = true
+    res.status(200).send("POST");
+  } catch (error) {
+    console.log(error);
+    res.status(403).send("Cannot POST");
+  }
+})
 
 app.listen(3001,() => {
   console.log("My Server is running 3001");
