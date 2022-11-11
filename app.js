@@ -42,7 +42,9 @@ app.post("/signup", async (req, res) => {
     const SALT = await bcrypt.genSalt(10) //how secure your hash will be
     //reassign the password to the hashed password
     req.body.password = await bcrypt.hash(req.body.password, SALT)
-    await UserModel.create(req.body);
+    const user = await UserModel.create(req.body);
+    const token = createJWT(user)
+    res.json({token, auth:true, user});//sends token back once signed up
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot POST");
