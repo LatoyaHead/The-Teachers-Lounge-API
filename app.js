@@ -5,6 +5,7 @@ const UserModel = require('./models/UserSchema')
 const bcrypt = require('bcryptjs')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
+const JWT = require('jsonwebtoken')
 require('dotenv').config()
 
 
@@ -51,20 +52,27 @@ app.post('/signin', async (req, res) => {
   try {
     //find user by email in db
     const user = await UserModel.findOne({email: req.body.email})
-    if (!user) return res.send('Please check your email and password!')
+    if (!user) return res.status(400).send('Please check your email!')
     //check if passwords match
     const decodedPassword = await bcrypt.compare(req.body.password, user.password)
-    if(!decodedPassword) return res.send('Please check your email and password!')
+    if(!decodedPassword) return res.status(400).send('Please check your password!')
+    // Create JWT token
+    const token = createJWT(user)
     //set the user session
     //create a new username in the session obj using the user info from db
     req.session.username = user.username
     req.session.loggedIn = true
-    res.status(200).send("POST");
+    res.json({token, auth:true, user});
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot POST");
   }
 })
+
+/*-- Helper Functions --*/
+function createJWT(user){
+  return JWT.sign({user}, process.env.SECRET, {expiresIn: '24h'})
+}
 
 app.listen(3001,() => {
   console.log("My Server is running 3001");
