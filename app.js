@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const UserModel = require('./models/UserSchema')
+const LoungeModel = require('./models/LoungeSchema')
 const bcrypt = require('bcryptjs')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
@@ -47,7 +48,7 @@ app.post("/signup", async (req, res) => {
     res.json({token, auth:true, user});//sends token back once signed up
   } catch (error) {
     console.log(error);
-    res.status(403).send("Cannot POST");
+    res.status(403).send("Cannot POST");  
   }
 });
 app.post('/signin', async (req, res) => {
@@ -68,6 +69,17 @@ app.post('/signin', async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot POST");
+  }
+})
+//POST: CREATE A NEW Post
+app.post('/topic', async (req, res) => {
+  console.log(req.body);
+  try{
+    const newLounge = await LoungeModel.create(req.body)
+    res.json({topic:newLounge});
+  } catch (error) {
+      console.log(error);
+      res.status(403).send('Cannot create')
   }
 })
 
