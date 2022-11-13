@@ -106,6 +106,29 @@ app.delete('/:id', async (req, res) => {
   
 })
 
+//GET POST BY ID
+app.get('/:id', async (req, res) => {
+  try {
+    const topic = await LoungeModel.findById(req.params.id)
+    res.json(topic)
+  } catch (error) {
+    console.log(error);
+    res.status(403).send('Cannot get')
+  }
+})
+
+//PUT: UPDATE BY ID
+app.put('/:id', async (req, res) => {
+  try {
+    const updatedTopic = await LoungeModel.findByIdAndUpdate(req.params.id, req.body, {'returnDocument' : "after"})
+    res.json(updatedTopic)
+  } catch (error) {
+    console.log(error);
+    res.status(403).send('Cannot update')
+  }
+  
+})
+
     
 
 
