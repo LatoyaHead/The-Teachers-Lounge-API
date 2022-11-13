@@ -5,6 +5,7 @@ const loungeSchema = new mongoose.Schema({
     title: {type: String, required: true},
     body: {type: String, required: true},
     author: {type: String, required: true},
+    avatar: {type:String, required: true}
 }, 
 { timestamps: { createdAt: 'created_at' } })
 

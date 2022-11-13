@@ -71,17 +71,44 @@ app.post('/signin', async (req, res) => {
     res.status(403).send("Cannot POST");
   }
 })
+
+//GET UserTopics
+app.get('/topics', async (req, res) => {
+  try{
+    const topics = await LoungeModel.find({})
+    res.json(topics)
+  }catch (error) {
+    res.status(403).send("No Topics Found");
+  }
+})
+
+
 //POST: CREATE A NEW Post
 app.post('/topic', async (req, res) => {
-  console.log(req.body);
   try{
     const newLounge = await LoungeModel.create(req.body)
     res.json({topic:newLounge});
   } catch (error) {
-      console.log(error);
-      res.status(403).send('Cannot create')
+    res.status(403).send('Cannot create')
   }
 })
+
+//DELETE: Remove by ID
+app.delete('/:id', async (req, res) => {
+  try {
+    const deletedTopic = await LoungeModel.findByIdAndRemove(req.params.id)
+    console.log(deletedTopic);
+    res.json({message:"Topic Deleted"})
+  } catch (error) {
+    console.log(error);
+    res.status(403).send('Cannot put')
+  }
+  
+})
+
+    
+
+
 
 /*-- Helper Functions --*/
 function createJWT(user){
