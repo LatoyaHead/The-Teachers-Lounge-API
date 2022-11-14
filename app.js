@@ -10,7 +10,7 @@ const JWT = require('jsonwebtoken')
 require('dotenv').config()
 const Pusher = require('pusher')
 
-
+const PORT = process.env.PORT || 3001
 const app = express()
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -154,7 +154,7 @@ function createJWT(user){
   return JWT.sign({user}, process.env.SECRET, {expiresIn: '24h'})
 }
 
-app.listen(3001,() => {
+app.listen(PORT,() => {
   console.log("My Server is running 3001");
 
   // connect to MongoDB
