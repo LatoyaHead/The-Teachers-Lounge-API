@@ -139,9 +139,10 @@ app.put('/:id', async (req, res) => {
 })
 
  app.post('/message', (req, res) => {
+  console.log(req.body);
   pusher.trigger("my-channel", "my-event", {
     message: req.body.message,
-    avatar: req.body.avatar,
+    // avatar: req.body.avatar,
     username: req.body.author
   });
  })   
