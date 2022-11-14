@@ -74,7 +74,7 @@ router.delete('/:id', async (req, res) => {
   try {
     const deletedLounge = await LoungeModel.findByIdAndRemove(req.params.id)
     console.log(deletedLounge);
-    res.redirect('/lounge')
+    res.status(200).send('Topic Deleted')
   } catch (error) {
     console.log(error);
     res.status(403).send('Cannot put')

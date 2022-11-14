@@ -8,9 +8,17 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const JWT = require('jsonwebtoken')
 require('dotenv').config()
+const Pusher = require('pusher')
 
 
 const app = express()
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_KEY,
+  secret: process.env.PUSHER_SECRET,
+  cluster: process.env.PUSHER_CLUSTER,
+  useTLS: true
+});
 app.use(cors()) //allows us to communicate between the 2 apps(client/api)
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -94,7 +102,8 @@ app.post('/topic', async (req, res) => {
 })
 
 //DELETE: Remove by ID
-app.delete('/:id', async (req, res) => {
+app.delete('/remove/:id', async (req, res) => {
+  console.log(req.params);
   try {
     const deletedTopic = await LoungeModel.findByIdAndRemove(req.params.id)
     console.log(deletedTopic);
@@ -129,7 +138,13 @@ app.put('/:id', async (req, res) => {
   
 })
 
-    
+ app.post('/message', (req, res) => {
+  pusher.trigger("my-channel", "my-event", {
+    message: req.body.message,
+    avatar: req.body.avatar,
+    username: req.body.author
+  });
+ })   
 
 
 
