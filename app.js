@@ -9,6 +9,7 @@ const MongoStore = require('connect-mongo')
 const JWT = require('jsonwebtoken')
 require('dotenv').config()
 const Pusher = require('pusher')
+const compression = require('compression')
 
 const PORT = process.env.PORT || 3001
 const app = express()
@@ -28,6 +29,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
+app.use(compression())
 
 app.get('/', (req, res) => {
   res.json({greet:'Hello'})
@@ -142,7 +144,7 @@ app.put('/:id', async (req, res) => {
   console.log(req.body);
   pusher.trigger("my-channel", "my-event", {
     message: req.body.message,
-    // avatar: req.body.avatar,
+    author_id: req.body.author_id,
     username: req.body.author
   });
  })   
