@@ -13,7 +13,7 @@ const compression = require('compression')
 
 const PORT = process.env.PORT || 3001
 const app = express()
-const pusher = new Pusher({
+const pusher = new Pusher({ 
   appId: process.env.PUSHER_APP_ID,
   key: process.env.PUSHER_KEY,
   secret: process.env.PUSHER_SECRET,
@@ -70,12 +70,12 @@ app.post('/signin', async (req, res) => {
     const decodedPassword = await bcrypt.compare(req.body.password, user.password)
     if(!decodedPassword) return res.status(400).send('Please check your password!')
     // Create JWT token
-    const token = createJWT(user)
+    const token = createJWT(user) //token created
     //set the user session
     //create a new username in the session obj using the user info from db
     req.session.username = user.username
     req.session.loggedIn = true
-    res.json({token, auth:true, user});
+    res.json({token, auth:true, user});//send info back
   } catch (error) {
     console.log(error);
     res.status(403).send("Cannot POST");
@@ -83,7 +83,7 @@ app.post('/signin', async (req, res) => {
 })
 
 //GET UserTopics
-app.get('/topics', async (req, res) => {
+app.get('/topics', async (req, res) => { //
   try{
     const topics = await LoungeModel.find({})
     res.json(topics)
@@ -140,6 +140,7 @@ app.put('/:id', async (req, res) => {
   
 })
 
+//Message: trigger pusher 
  app.post('/message', (req, res) => {
   console.log(req.body);
   pusher.trigger("my-channel", "my-event", {
